@@ -1,0 +1,19 @@
+host: example.host.com
+tags:
+  - name: env_type
+    value: staging
+  - name: app
+    value: python-monitor
+metrics:
+  gauges:
+    - jenkins.job.count.value
+    - jenkins.executor.count.value
+    - jenkins.node.count.value
+    - jenkins.node.offline.value
+    - jenkins.node.online.value
+    - jenkins.queue.blocked.value
+    - jenkins.queue.buildable.value
+    - jenkins.queue.pending.value
+    - jenkins.queue.size.value
+  meters:
+    - jenkins.job.scheduled
