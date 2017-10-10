@@ -1,3 +1,4 @@
+#!/usr/local/bin/python
 """Thios is Jenkins HTTP check remote modue."""
 import sys
 import os
