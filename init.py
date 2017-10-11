@@ -9,11 +9,20 @@ from datadog import api
 import yaml
 
 
-metrics_token = os.environ['JENKINS_METRICS_TOKEN']
-jenkins_uri = ("https://{0}").format(os.environ['JENKINS_HOST'])
-api_key = os.environ('DATADOG_API_KEY')
-app_key = os.environ('DATADOG_APP_KEY')
+# Parse config file
+with open("config.yaml", 'r') as stream:
+    try:
+        config = yaml.load(stream)
+    except yaml.YAMLError as exc:
+        print(exc)
+        sys.exit(1)
 
+cfg_metrics = config['metrics']
+
+api_key = os.environ['DATADOG_API_KEY']
+app_key = os.environ['DATADOG_APP_KEY']
+metrics_token = os.environ['JENKINS_METRICS_TOKEN']
+jenkins_uri = ("https://{0}").format(config['host'])
 
 options = {
     'api_key': api_key,
@@ -25,15 +34,6 @@ metrics_url = ("{0}/metrics/{1}/metrics").format(jenkins_uri, metrics_token)
 ping_url = ("{0}/metrics/{1}/ping").format(jenkins_uri, metrics_token)
 healthcheck_url = ("{0}/metrics/{1}/healthcheck").format(jenkins_uri, metrics_token) # noqa
 
-# Parse config file
-with open("cfg/config.yaml", 'r') as stream:
-    try:
-        config = yaml.load(stream)
-    except yaml.YAMLError as exc:
-        print(exc)
-        sys.exit(1)
-
-cfg_metrics = config['metrics']
 
 # populate mentrics tags
 tags = []
