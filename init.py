@@ -1,4 +1,4 @@
-#!/usr/local/bin/python
+#!/usr/bin/python
 """Thios is Jenkins HTTP check remote modue."""
 import sys
 import os
@@ -10,11 +10,14 @@ import yaml
 
 
 # Parse config file
-with open("config.yaml", 'r') as stream:
+with open("/app/cfg/config.yaml", 'r') as stream:
     try:
         config = yaml.load(stream)
     except yaml.YAMLError as exc:
         print(exc)
+        sys.exit(1)
+    except IOError as e:
+        print(("Config file not found: {0}").format(e))
         sys.exit(1)
 
 cfg_metrics = config['metrics']
@@ -63,7 +66,7 @@ def host_ping():
         api.Metric.send(
             metric='jenkins.healthcheck.ping',
             host=config['host'],
-            points=1,
+            points=0,
             tags=ping_tag,
             type='gauge'
         )
@@ -83,10 +86,10 @@ def report_healthcheck():
         sys.exit(1)
     # populate mentrics tags
     for check in healthcheck.keys():
-        if healthcheck[check]['healthy'] == 'true':
-            check_value = 1
-        else:
+        if healthcheck[check]['healthy'] is True:
             check_value = 0
+        else:
+            check_value = 1
         api.Metric.send(
             metric=("jenkins.healthcheck.{0}").format(check),
             host=config['host'],
